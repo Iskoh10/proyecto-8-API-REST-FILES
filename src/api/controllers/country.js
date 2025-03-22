@@ -14,7 +14,12 @@ const getCountry = async (req, res, next) => {
   try {
     const { id } = req.params;
     const country = await Country.findById(id);
-    return res.status(200).json(country);
+
+    if (country) {
+      return res.status(200).json(country);
+    } else {
+      return res.status(404).json('País no encontrado');
+    }
   } catch (error) {
     return res.status(400).json(error);
   }
@@ -52,8 +57,13 @@ const updateCountry = async (req, res, next) => {
     const newCountry = new Country(req.body);
     if (req.file) {
       const countryToUpdate = await Country.findById(id);
-      deleteFile(countryToUpdate.img);
-      newCountry.img = req.file.path;
+
+      if (countryToUpdate) {
+        deleteFile(countryToUpdate.img);
+        newCountry.img = req.file.path;
+      } else {
+        return res.status(404).json('País no encontrado');
+      }
     }
     newCountry._id = id;
 
@@ -71,11 +81,16 @@ const deleteCountry = async (req, res, next) => {
   try {
     const { id } = req.params;
     const countryDeleted = await Country.findByIdAndDelete(id);
-    deleteFile(countryDeleted.img);
-    return res.status(200).json({
-      mensaje: 'Pais eliminado',
-      countryDeleted
-    });
+
+    if (countryToUpdate) {
+      deleteFile(countryDeleted.img);
+      return res.status(200).json({
+        mensaje: 'Pais eliminado',
+        countryDeleted
+      });
+    } else {
+      return res.status(404).json('País no encontrado');
+    }
   } catch (error) {
     return res.status(400).json(error);
   }
