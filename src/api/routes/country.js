@@ -1,4 +1,4 @@
-const upload = require('../../middlewares/file');
+const { upload } = require('../../middlewares/file');
 const {
   getCountries,
   getCountry,
